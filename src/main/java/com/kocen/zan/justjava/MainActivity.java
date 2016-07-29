@@ -1,5 +1,7 @@
 package com.kocen.zan.justjava;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +15,8 @@ public class MainActivity extends AppCompatActivity {
     int quantity = 0;
     boolean whipped = false;
     boolean chocholate = false;
+    String name;
+    int price;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,20 +32,26 @@ public class MainActivity extends AppCompatActivity {
         if (chocholate){
             oneCoffee = oneCoffee + 2;
         }
-
         return quantity * oneCoffee;
     }
 
     public void submitOrder(View view){
-        int price = calculatePrice();
-        String priceMessage = createOrderSummary(price);
+        price = calculatePrice();
+        edit_name(view);
+        String priceMessage = createOrderSummary();
         displayMessage(priceMessage);
     }
 
-    private String createOrderSummary(int price) {
+    public void sendOrder(View view){
+        Intent email = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
+        email.putExtra(Intent.EXTRA_SUBJECT, "Order for " + name);
+        email.putExtra(Intent.EXTRA_TEXT, createOrderSummary());
+        if (email.resolveActivity(getPackageManager()) != null) {
+            startActivity(email);
+        }
+    }
 
-        EditText inputTxt = (EditText)findViewById(R.id.edit_name);
-        String name = inputTxt.getText().toString();
+    private String createOrderSummary() {
 
         return("ORDER SUMMARY\n" +
                 "\nName: " + name +
@@ -69,7 +79,10 @@ public class MainActivity extends AppCompatActivity {
             chocholate = false;
         }
     }
-
+    public void edit_name(View view) {
+        EditText inputTxt = (EditText) findViewById(R.id.edit_name);
+        name = inputTxt.getText().toString();
+    }
 
     private void displayMessage(String message) {
         TextView orderSumTextView = (TextView) findViewById(R.id.order_summary);
