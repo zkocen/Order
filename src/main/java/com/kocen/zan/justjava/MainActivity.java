@@ -1,20 +1,18 @@
 package com.kocen.zan.justjava;
 
-import android.icu.text.NumberFormat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     int quantity = 0;
     boolean whipped = false;
     boolean chocholate = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +21,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public int calculatePrice(){
-        return(quantity * 5);
+        int oneCoffee = 5;
+        if(whipped){
+            oneCoffee++;
+        }
+        if (chocholate){
+            oneCoffee = oneCoffee + 2;
+        }
+
+        return quantity * oneCoffee;
     }
 
     public void submitOrder(View view){
@@ -71,11 +77,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void increment(View view){
+        if (quantity == 100){
+            Toast.makeText(this, "You cannot order more than 100 coffee", Toast.LENGTH_SHORT).show();
+            return;
+        }
         quantity++;
         displayQantity(quantity);
     }
 
     public void decrement(View view){
+        if (quantity == 0) {
+            Toast.makeText(this, "You cannot have less than 0 coffee", Toast.LENGTH_SHORT).show();
+            return;
+        }
         quantity--;
         displayQantity(quantity);
     }
